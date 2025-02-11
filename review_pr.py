@@ -24,7 +24,13 @@ def get_pull_request_data():
     # GitHub API client
     g = Github(GITHUB_TOKEN)
     repo = g.get_repo("shraddhack/leetcode")  # Replace with your repo name
-    pr = repo.get_pull(int(os.getenv('PR_ID')))
+    #pr = repo.get_pull(int(os.getenv('PR_ID')))
+    pr_id = os.getenv('PR_ID')
+    if not pr_id:
+        raise ValueError("PR_ID environment variable is not set.")
+    pr_id = int(pr_id)  # Now you can safely convert it to an integer
+    # Fetch the PR using the pr_id (your existing code)
+    pr = repo.get_pull(pr_id)
     return pr
 
 # Function to send the code to GPT for review

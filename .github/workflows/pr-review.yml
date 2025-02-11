@@ -22,8 +22,9 @@ jobs:
          pip install PyGithub openai requests
 
     - name: Run ChatGPT PR Review
-      run: |
-        python review_pr.py
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         GITHUB_TOKEN: ${{ secrets.OPENAI_GITHUB_TOKEN }}
+        PR_ID: ${{ github.event.pull_request.number }}
+      run: |
+        python review_pr.py
