@@ -52,7 +52,7 @@ def get_pull_request_data():
 def get_gpt_review(changes):
     try:
         # Make the API call
-        response = openai.Completions.create(
+        response = openai.completions.create(
             model="gpt-3.5-turbo",  # Use a model available within your quota
             prompt=f"Here are the changes in the code:\n{changes}",
             max_tokens=150,
@@ -61,17 +61,21 @@ def get_gpt_review(changes):
 
         return response.choices[0].text.strip()
 
-    except openai.error.RateLimitError:
-        print("Rate limit exceeded. Retrying...")
-        time.sleep(60)  # Wait for 60 seconds before retrying
-        return get_gpt_review(changes)  # Retry the request
-    except openai.error.InsufficientQuotaError:
-        print("Quota exceeded. Please check your OpenAI plan and billing details.")
-        return None
+    except openai.error.OpenAIError as e:
+        # This is the base class for all OpenAI exceptions.
+        print(f"OpenAI Error: {e}")
+        if 'quota' in str(e).lower():
+            print("Quota exceeded. Please check your OpenAI plan and billing details.")
+        elif 'rate limit' in str(e).lower():
+            print("Rate limit exceeded. Retrying...")
+            time.sleep(60)  # Wait for 60 seconds before retrying
+            return get_gpt_review(changes)  # Retry the request
+        else:
+            # Handle other errors
+            return None
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Unexpected error: {e}")
         return None
-
 
 # Function to add a comment to a PR
 def post_comment(pr, review):
