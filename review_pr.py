@@ -61,22 +61,6 @@ def get_gpt_review(changes):
 
         return response.choices[0].text.strip()
 
-    except openai.error.OpenAIError as e:
-        # This is the base class for all OpenAI exceptions.
-        print(f"OpenAI Error: {e}")
-        if 'quota' in str(e).lower():
-            print("Quota exceeded. Please check your OpenAI plan and billing details.")
-        elif 'rate limit' in str(e).lower():
-            print("Rate limit exceeded. Retrying...")
-            time.sleep(60)  # Wait for 60 seconds before retrying
-            return get_gpt_review(changes)  # Retry the request
-        else:
-            # Handle other errors
-            return None
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-        return None
-
 # Function to add a comment to a PR
 def post_comment(pr, review):
     pr.create_issue_comment(review)
