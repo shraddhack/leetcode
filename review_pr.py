@@ -33,18 +33,20 @@ def get_pull_request_data():
     pr = repo.get_pull(pr_id)
     return pr
 
-# Function to send the code to GPT for review
-def get_gpt_review(code):
-    prompt = f"Please review the following code for style, best practices, potential bugs, and performance improvements:\n\n{code}\n"
-    
-    response = openai.Completion.create(
-        engine="gpt-4",  # You can use "gpt-3.5-turbo" or other models as well
-        prompt=prompt,
-        max_tokens=500,
-        temperature=0.5
+# Get GPT-4 review for the changes
+def get_gpt_review(changes):
+    response = openai.ChatCompletion.create(
+        model="gpt-4",  # Or use "gpt-3.5-turbo"
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant for reviewing code."},
+            {"role": "user", "content": f"Please review the following code changes:\n\n{changes}"},
+        ],
+        temperature=0.5,
     )
-    
-    return response.choices[0].text.strip()
+
+    # Extract the review from the response
+    review = response['choices'][0]['message']['content']
+    return review
 
 # Function to add a comment to a PR
 def post_comment(pr, review):
