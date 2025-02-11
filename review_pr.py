@@ -50,15 +50,28 @@ def get_pull_request_data():
 
 
 def get_gpt_review(changes):
-        # Make the API call
-        response = openai.completions.create(
-            model="gpt-3.5-turbo",  # Use a model available within your quota
-            prompt=f"Here are the changes in the code:\n{changes}",
-            max_tokens=150,
-            temperature=0.5
-        )
 
-        return response.choices[0].text.strip()
+	from openai import OpenAI
+	client = OpenAI()
+
+	completion = client.chat.completions.create(
+  	model="gpt-3.5-turbo",
+  	messages=[
+    	{"role": "system", "content": "You are a helpful assistant."},
+    	{"role": "user", "content": "Hello!"}
+  	]
+	)
+
+	return completion.choices[0].message
+        # Make the API call
+        #response = openai.completions.create(
+        #    model="gpt-3.5-turbo",  # Use a model available within your quota
+         #   prompt=f"Here are the changes in the code:\n{changes}",
+         #   max_tokens=150,
+         #   temperature=0.5
+       # )
+
+        #return response.choices[0].text.strip()
 
 # Function to add a comment to a PR
 def post_comment(pr, review):
