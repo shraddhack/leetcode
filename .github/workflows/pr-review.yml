@@ -19,7 +19,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install openai requests
+         pip install PyGithub openai requests
 
     - name: Run ChatGPT PR Review
       run: |
