@@ -1,0 +1,29 @@
+name: PR Review with ChatGPT
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        pip install openai requests
+
+    - name: Run ChatGPT PR Review
+      run: |
+        python review_pr.py
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+	GITHUB_TOKEN: ${{ secrets.OPENAI_GITHUB_TOKEN }}
