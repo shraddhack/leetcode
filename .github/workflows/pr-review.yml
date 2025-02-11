@@ -26,4 +26,4 @@ jobs:
         python review_pr.py
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-	GITHUB_TOKEN: ${{ secrets.OPENAI_GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.OPENAI_GITHUB_TOKEN }}
