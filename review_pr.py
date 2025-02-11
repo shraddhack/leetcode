@@ -34,19 +34,44 @@ def get_pull_request_data():
     return pr
 
 # Get GPT-4 review for the changes
-def get_gpt_review(changes):
-    response = openai.ChatCompletion.create(
-        model="gpt-4",  # Or use "gpt-3.5-turbo"
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant for reviewing code."},
-            {"role": "user", "content": f"Please review the following code changes:\n\n{changes}"},
-        ],
-        temperature=0.5,
-    )
+#def get_gpt_review(changes):
+ #   response = openai.ChatCompletion.create(
+  #      model="gpt-4",  # Or use "gpt-3.5-turbo"
+   #     messages=[
+    #        {"role": "system", "content": "You are a helpful assistant for reviewing code."},
+     #       {"role": "user", "content": f"Please review the following code changes:\n\n{changes}"},
+      #  ],
+       # temperature=0.5,
+   # )
 
     # Extract the review from the response
-    review = response['choices'][0]['message']['content']
-    return review
+    #review = response['choices'][0]['message']['content']
+    #return review
+
+
+def get_gpt_review(changes):
+    try:
+        # Make the API call
+        response = openai.Completions.create(
+            model="gpt-3.5-turbo",  # Use a model available within your quota
+            prompt=f"Here are the changes in the code:\n{changes}",
+            max_tokens=150,
+            temperature=0.5
+        )
+
+        return response.choices[0].text.strip()
+
+    except openai.error.RateLimitError:
+        print("Rate limit exceeded. Retrying...")
+        time.sleep(60)  # Wait for 60 seconds before retrying
+        return get_gpt_review(changes)  # Retry the request
+    except openai.error.InsufficientQuotaError:
+        print("Quota exceeded. Please check your OpenAI plan and billing details.")
+        return None
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
 
 # Function to add a comment to a PR
 def post_comment(pr, review):
