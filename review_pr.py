@@ -50,7 +50,6 @@ def get_pull_request_data():
 
 
 def get_gpt_review(changes):
-    try:
         # Make the API call
         response = openai.completions.create(
             model="gpt-3.5-turbo",  # Use a model available within your quota
